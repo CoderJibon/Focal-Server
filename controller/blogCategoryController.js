@@ -85,7 +85,7 @@ export const deleteBlogCategory = asyncHandler(async (req, res) => {
     throw new Error("Blog cat Already Delete");
   }
   //response delete the blog-category
-  res.status(200).json({ message: "Blog cat Delete Successful", BlogCategory });
+  res.status(200).json({ message: "Blog cat Delete Successful", blogCategory });
 });
 
 /**
