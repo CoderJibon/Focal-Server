@@ -21,31 +21,34 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (!firstName || !lastName || !email || !password) {
     throw new Error("all fields are required");
   }
+  try {
+    // find user
+    const user = await User.findOne({ email });
 
-  // find user
-  const user = await User.findOne({ email });
+    //if Email is already exists
+    if (user) {
+      throw new Error("Email already exists");
+    }
 
-  //if Email is already exists
-  if (user) {
+    //password make hash
+    const hashPassword = bcrypt.hashSync(password, 10);
+
+    //create new user
+    const newUser = await User.create({
+      firstName,
+      lastName,
+      slug: createSlug(firstName + "-" + lastName),
+      email,
+      password: hashPassword,
+    });
+
+    // response
+    res
+      .status(201)
+      .json({ user: newUser, message: "Registration successfully" });
+  } catch (error) {
     throw new Error("Email already exists");
   }
-
-  //password make hash
-  const hashPassword = bcrypt.hashSync(password, 10);
-
-  //create new user
-  const newUser = await User.create({
-    firstName,
-    lastName,
-    slug: createSlug(firstName + "-" + lastName),
-    email,
-    password: hashPassword,
-  });
-
-  // response
-  res
-    .status(201)
-    .json({ user: newUser, message: "User Registration successfully" });
 });
 
 /**

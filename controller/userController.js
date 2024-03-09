@@ -203,9 +203,70 @@ export const getWishlist = asyncHandler(async (req, res) => {
     // Get all users
     const user = await User.findById(_id).populate("wishlist");
     //response
-    res.status(200).json(user);
+    res.status(200).json({ Wishlist: user.wishlist });
   } catch (error) {
     throw new Error("not authorized");
+  }
+});
+
+/**
+ * @desc add to wishlist
+ * @route api/v1/user/wishlist
+ * @method put
+ * @access protected
+ */
+export const addToWishlist = asyncHandler(async (req, res) => {
+  // get product id form body
+  const { productId } = req.body;
+  if (!productId) {
+    throw new Error("Product ID MUST be provided");
+  }
+  //is login user
+  const { email } = req.me;
+  //find user
+  const user = await User.findOne({ email });
+  //if user is not valid
+  if (!user) {
+    throw new Error("invalid user");
+  }
+  try {
+    // if user already wishlist added
+    const alreadyAdd = user.wishlist.find((el) => el.toString() === productId);
+    // if wishlist
+    if (alreadyAdd) {
+      const removeWishlist = await User.findByIdAndUpdate(
+        user._id,
+        {
+          $pull: {
+            wishlist: productId,
+          },
+        },
+        {
+          new: true,
+        }
+      ).populate("wishlist");
+      return res.status(200).json({
+        wishlist: removeWishlist.wishlist,
+        message: "Remove Wishlist",
+      });
+    } else {
+      const addWishlist = await User.findByIdAndUpdate(
+        user._id,
+        {
+          $push: {
+            wishlist: productId,
+          },
+        },
+        {
+          new: true,
+        }
+      ).populate("wishlist");
+      res
+        .status(200)
+        .json({ wishlist: addWishlist.wishlist, message: "Wishlist Add Done" });
+    }
+  } catch (error) {
+    throw new Error(error);
   }
 });
 

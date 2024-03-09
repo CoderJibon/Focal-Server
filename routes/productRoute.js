@@ -1,7 +1,6 @@
 import express from "express";
 import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 import {
-  addToWishlist,
   createProduct,
   deleteSingleProduct,
   getAllProducts,
@@ -37,7 +36,7 @@ productRoute
     uploadPhoto.fields([{ name: "productThumbnails" }, { name: "images" }]),
     updateProduct
   );
-productRoute.route("/wishlist").put(authMiddleware, addToWishlist);
+
 productRoute.route("/rating").put(authMiddleware, rating);
 productRoute
   .route("/:id")

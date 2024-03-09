@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addToCart,
+  addToWishlist,
   applyCoupon,
   blockUser,
   createCashOrder,
@@ -33,6 +34,7 @@ userRoute.route("/all").get(authMiddleware, isAdmin, getAllUsers);
 userRoute.route("/block/:id").get(authMiddleware, isAdmin, blockUser);
 userRoute.route("/unblock/:id").get(authMiddleware, isAdmin, unblockUser);
 userRoute.route("/wishlist").get(authMiddleware, getWishlist);
+userRoute.route("/wishlist").put(authMiddleware, addToWishlist);
 userRoute.route("/address").put(authMiddleware, saveAddress);
 userRoute.route("/cart").post(authMiddleware, addToCart);
 userRoute.route("/cart").get(authMiddleware, getUserCart);
